@@ -10,7 +10,7 @@ Written in Python, it has a console based GUI (based on curses) and hence will r
 
 ## Installation Procedure
 
-There isn't any. To run the client, just navigate to the **lexiconator/src** directory in your terminal and run:
+There isn't any. To run the client, just navigate to the **lexiconator-client/src** directory in your terminal and run:
 
 `
 python __main.py__
