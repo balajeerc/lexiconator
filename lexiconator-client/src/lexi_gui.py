@@ -102,8 +102,14 @@ class LexiGUI:
          ('editcp', 'black,bold', 'dark cyan', 'standout'),
          ('dialog_body', 'dark cyan,bold', 'black', 'standout'),
          ('dialog_heading', 'dark cyan', 'black', 'standout')]
-        footer_text = [('title', 'Lexicanator'),'        ',
-                       ('key', 'ESC'),' exits']
+        footer_text = [('title', 'Lexicanator'),'  ',
+                       ('key', 'ESC'),':exits,  ',
+                       ('key', 'TAB'), ':search,  ',
+                       ('key', 'LEFT'),':next-word,  ',
+                       ('key', 'RIGHT'),':prev-word,  ',
+                       ('key', 'UP'),':rate-up,  ',
+                       ('key', 'DOWN'),':rate-down  ',
+                      ]
                        
         dialog_header_text = [('title', 'Change Mode')]
         dialog_footer_text = [('title', 'Enter to Apply Changes')]
