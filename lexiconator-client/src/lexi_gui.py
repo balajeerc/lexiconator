@@ -1,4 +1,3 @@
-#!/usr/bin/python
 #
 # 	Lexiconator - A Free Word Learning Aid, like Flash Cards
 #	Copyright (C) 2011 Balajee.R.C 
@@ -6,7 +5,7 @@
 #	This library is free software; you can redistribute it and/or
 #	modify it under the terms of the GNU Lesser General Public
 #	License as published by the Free Software Foundation; either
-#	version 2.1 of the License, or (at your option) any later version.
+#	version 3 of the License, or (at your option) any later version.
 #
 #	This library is distributed in the hope that it will be useful,
 #	but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -52,11 +51,25 @@ GUI for Lexiconator
 class LexiGUI:
 
     def __init__(self, delegate):
+    	
+    	#Instead of creating separate variables to store the widgets used,
+    	#we use one dictionary that stores all the widgets by key
         self.widget_table = {}
+        
+        #Main loop for the GUI
         self.main_loop = None
+        
+        #Indicates if the dialog popup box used to change search pattern is active
         self.dialog_on = False
+        
+        #Delegate assigned to handle events in the GUI
         self.delegate = delegate
-
+        
+        #Indicates if the  definition and usage for current word are being displayed
+        self.show_def = False
+        self.curr_definition_text = ""
+        self.curr_usage_text = ""
+        
     def setDelegate(self, delegate):
         """Setter method for assigning the GUI's event delegate
 
@@ -75,9 +88,28 @@ class LexiGUI:
         rating -- user rating of the new word \t
         """
         self.widget_table['word_content'].set_text(('body', word.lstrip().rstrip()))
-        self.widget_table['definition_content'].set_text(('body', definition))
-        self.widget_table['usage_content'].set_text(('body', usage))
         self.widget_table['rating_value'].set_text(('body', str(rating)))
+		
+		#When a word change occurrs, we want to ensure that the defintion and usage
+		#are hidden till the user presses SPACE
+        self.curr_definition_text = definition
+        self.curr_usage_text  = usage
+        self.show_def = False
+    	self.showDefinition()
+    	
+    def showDefinition(self):
+    	"""Shows or hides the current word's definition and usage based on the specified status
+    	"""        
+    	definition_text_shown = " "
+    	usage_text_shown = " "
+    	
+    	if self.show_def:
+    		definition_text_shown = self.curr_definition_text
+    		usage_text_shown = self.curr_usage_text
+    	
+        self.widget_table['definition_content'].set_text(('body', definition_text_shown))
+        self.widget_table['usage_content'].set_text(('body', usage_text_shown))
+    		    
 
     def setMode(self, pattern, minRating, maxRating, randomize):
         """Updates the GUI with the specified mode parameters
@@ -93,6 +125,11 @@ class LexiGUI:
         self.widget_table['max_rating'].set_edit_text(str(maxRating))
 
     def initGUI(self):
+        """Initialises the GUI with our widget layout
+        """
+        
+        #Palettes define the styles used to display the various widgets and the text
+        #contained within
         self.widget_table['palette'] = [('heading', 'black,bold', 'dark cyan', 'standout'),
          ('body', 'black', 'dark cyan', 'standout'),
          ('foot', 'light gray', 'black'),
@@ -102,13 +139,15 @@ class LexiGUI:
          ('editcp', 'black,bold', 'dark cyan', 'standout'),
          ('dialog_body', 'dark cyan,bold', 'black', 'standout'),
          ('dialog_heading', 'dark cyan', 'black', 'standout')]
-        footer_text = [('title', 'Lexicanator'),'  ',
-                       ('key', 'ESC'),':exits,  ',
-                       ('key', 'TAB'), ':search,  ',
-                       ('key', 'LEFT'),':next-word,  ',
-                       ('key', 'RIGHT'),':prev-word,  ',
-                       ('key', 'UP'),':rate-up,  ',
-                       ('key', 'DOWN'),':rate-down  ',
+
+        footer_text = [('title', 'Lexicanator'),' ',
+                       ('key', 'ESC'),':exits, ',
+                       ('key', 'TAB'), ':search, ',
+                       ('key', 'SPACE'), ':show/hide, ',
+                       ('key', 'LEFT'),':next-word, ',
+                       ('key', 'RIGHT'),':prev-word, ',
+                       ('key', 'UP'),':rate-up, ',
+                       ('key', 'DOWN'),':rate-down ',
                       ]
                        
         dialog_header_text = [('title', 'Change Mode')]
@@ -121,9 +160,9 @@ class LexiGUI:
         self.widget_table['word_content'] = urwid.Text(('body', 'Word content comes here'))
         self.widget_table['word_content_pad'] = (urwid.Padding(self.widget_table['word_content'], ('fixed left', 2), ('fixed right', 2), 20),)
         self.widget_table['definition_heading'] = urwid.Text(('heading', 'Definition:'))
-        self.widget_table['definition_content'] = urwid.Text(('body', 'Definition Content comes here'))
+        self.widget_table['definition_content'] = urwid.Text(('body', ''))
         self.widget_table['usage_heading'] = urwid.Text(('heading', 'Usage:'))
-        self.widget_table['usage_content'] = urwid.Text(('body', 'Usage Content comes here'))
+        self.widget_table['usage_content'] = urwid.Text(('body', ''))
         self.widget_table['rating_heading'] = urwid.Text(('heading', 'Rating:'))
         self.widget_table['rating_value'] = urwid.Text(('body', 'Rating value comes here'))        
         main_content_list = [blank,
@@ -176,6 +215,12 @@ class LexiGUI:
         self.main_loop.run()
 
     def handleInput(self, input):
+    	"""Input handler for the GUI. Note that this is only an entry point for the
+    	event handling. This method in turn calls various methods on its assigned delegate
+    	
+		Keyword Arguments:
+		input -- the key that initiated the event    	
+        """
         if input == 'esc':
             raise urwid.ExitMainLoop()
         if input == 'tab':
@@ -206,3 +251,8 @@ class LexiGUI:
         elif input == 'right':
             if not self.dialog_on:
                 self.delegate.getNextWord()
+        elif ord(input) == 32:            
+            if not self.dialog_on:
+            	#print("Showing definition!")
+                self.show_def = not self.show_def 
+                self.showDefinition()        

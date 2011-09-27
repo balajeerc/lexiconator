@@ -1,4 +1,3 @@
-#!/usr/bin/python
 #
 # 	Lexiconator - A Free Word Learning Aid, like Flash Cards
 #	Copyright (C) 2011 Balajee.R.C 
@@ -6,7 +5,7 @@
 #	This library is free software; you can redistribute it and/or
 #	modify it under the terms of the GNU Lesser General Public
 #	License as published by the Free Software Foundation; either
-#	version 2.1 of the License, or (at your option) any later version.
+#	version 3 of the License, or (at your option) any later version.
 #
 #	This library is distributed in the hope that it will be useful,
 #	but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,17 +18,18 @@
 #
 # Lexicanator web site: http://www.balajeerc.info/lexicanator
 
+import os
 import sqlite3
 
 class LexiDB():
 	
-	def __init__(self):
-		pass
+	def __init__(self,currPath):
+		self.curr_path = currPath
 	
 	def initDB(self):
 		"""Initialises the database"""		
 		#Connect to an existing file named words.db or create a new one
-		conn = sqlite3.connect('words.db')		
+		conn = sqlite3.connect(os.path.join(self.curr_path,'words.db'))		
 		#Get the cursor
 		c = conn.cursor()		
 		# Create table if it doesnt exist already
@@ -43,7 +43,7 @@ class LexiDB():
 		if rowCount <= 0:
 			#This means that the list of words from the text file has not been 
 			#entered into the database. We proceed to do just that.
-			f = open('wordlist.txt', 'r')
+			f = open(os.path.join(self.curr_path,'wordlist.txt'), 'r')
 			i = 1
 			for each_word in f:
 				#Give each word a default initial rating of 5
@@ -70,7 +70,7 @@ class LexiDB():
 						set this to a positive number, say 2, the word by its index in the word list database
 		"""
 		#Connect to an existing file named words.db or create a new one
-		conn = sqlite3.connect('words.db')		
+		conn = sqlite3.connect(os.path.join(self.curr_path,'words.db'))		
 		#Get the cursor
 		c = conn.cursor()
 		
@@ -116,7 +116,7 @@ class LexiDB():
 		newRating -- new rating of this word
 		"""
 		#Connect to an existing file named words.db or create a new one
-		conn = sqlite3.connect('words.db')		
+		conn = sqlite3.connect(os.path.join(self.curr_path,'words.db'))		
 		#Get the cursor
 		c = conn.cursor()		
 		#Setup the pattern
@@ -129,14 +129,5 @@ class LexiDB():
 		conn.commit()
 		#Close the connection
 		conn.close()
-	
-#def main():
-#	dbHandler = LexiDB()
-#	dbHandler.initDB()
-#	retList = dbHandler.fetchWord("bri", 5, 5, -1)
-#	for each_record in retList:
-#		print each_record
-#		#dbHandler.updateRating(str(each_record[0]), 6)
-#		
-#if __name__=="__main__": 
-#	main()
+
+		
