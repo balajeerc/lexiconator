@@ -100,7 +100,7 @@ class LexiApp(LexiGUIDelegate):
 		foundDefined = False
 		
 		while not foundDefined:		
-			dbQuery = self.dbHandler.fetchWord(self.curr_search_pattern,
+			dbQuery = self.dbHandler.fetchWord(self.curr_search_pattern.lstrip().rstrip(),
 											   self.curr_min_rating,
 											   self.curr_max_rating,
 											   self.curr_pattern_offset)
@@ -158,6 +158,7 @@ class LexiApp(LexiGUIDelegate):
 	def changeMode(self,pattern,minRating,maxRating,randomize):
 		if self.curr_search_pattern != pattern or self.curr_min_rating != minRating or self.curr_max_rating != maxRating:
 			#TODO: Handle randomization!
+			#debug().settrace()
 			self.curr_pattern_offset = -1
 			self.curr_search_pattern = pattern
 			self.curr_min_rating = minRating
@@ -166,5 +167,4 @@ class LexiApp(LexiGUIDelegate):
 			self.guiHandler.setWord(self.curr_word,
 								self.curr_definition,
 								self.curr_usage,
-								self.curr_user_rating
-								)
+								self.curr_user_rating)

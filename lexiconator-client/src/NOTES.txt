@@ -19,7 +19,7 @@ TODO List:
    iii) Add method to fetch records starting with a particular pattern and within a specified rating range Ã
    iv) Add method to update the rating of a particular word Ã
 4. Wordnik API Queries:
-   i) Retrieve basic definition chunk for a given word from the Wordnik server.
-   ii) Parse the retrieved information, segregate definition and usage from it.
-   iii) Remove any extraneous characters from the definition and usage strings.
-   iv) Display the strings obtained in the GUI
+   i) Retrieve basic definition chunk for a given word from the Wordnik server. Ã
+   ii) Parse the retrieved information, segregate definition and usage from it. Ã
+   iii) Remove any extraneous characters from the definition and usage strings. Ã
+   iv) Display the strings obtained in the GUI Ã
