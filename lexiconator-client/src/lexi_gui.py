@@ -251,7 +251,7 @@ class LexiGUI:
         elif input == 'right':
             if not self.dialog_on:
                 self.delegate.getNextWord()
-        elif ord(input) == 32:            
+        elif input == ' ':            
             if not self.dialog_on:
             	#print("Showing definition!")
                 self.show_def = not self.show_def 

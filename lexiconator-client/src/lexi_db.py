@@ -40,6 +40,7 @@ class LexiDB():
 		for each_row in c:
 			rowCount = rowCount+1
 			break			
+		
 		if rowCount <= 0:
 			#This means that the list of words from the text file has not been 
 			#entered into the database. We proceed to do just that.
@@ -51,7 +52,25 @@ class LexiDB():
 				c.execute('INSERT INTO Words VALUES (?,?,?)', t)
 				i = i+1		
 		#Commit the changes
-		conn.commit()		
+		conn.commit()
+		
+		#Do the same for the last used word table
+		c.execute('''CREATE TABLE IF NOT EXISTS 
+					LastWord(Id INTEGER PRIMARY KEY, Word TEXT)''')	
+		c.execute("""SELECT * FROM LastWord""")		
+		rowCount = 0
+		for each_row in c:
+			rowCount = rowCount+1
+			break
+		if rowCount <= 0:
+			#This means that there is no prior entry in the last used words table
+			#This would occur if this is the first time that the table is being
+			#initialised
+			t = (1,"aardvark")
+			c.execute('INSERT INTO LastWord VALUES (?,?)', t)
+
+		#Commit the changes
+		conn.commit()				
 		#Close the open database connection
 		conn.close()
 	
@@ -108,6 +127,23 @@ class LexiDB():
 		#Return the results		
 		return result	
 	
+	def fetchLastWord(self):
+		"""Returns the last word that was queried by user in the previous session		
+		"""
+		#Connect to an existing file named words.db or create a new one
+		conn = sqlite3.connect(os.path.join(self.curr_path,'words.db'))		
+		#Get the cursor
+		c = conn.cursor()		
+		#Query the last word table
+		c.execute("""SELECT * FROM LastWord LIMIT 1""")
+		
+		result = None
+		#The first row of the query result contains the last word used
+		for each_row in c:			
+			result = each_row[1]
+			break
+		return result
+				
 	def updateRating(self,word,newRating):
 		"""Updates the rating of a specified word.
 		
@@ -130,4 +166,23 @@ class LexiDB():
 		#Close the connection
 		conn.close()
 
+	def updateLastWord(self,word):
+		"""Updates the last queried word in the LastWord table
 		
+		Keyword Parameters:
+		word -- word to be stored as last word
+		"""
+		#Connect to an existing file named words.db or create a new one
+		conn = sqlite3.connect(os.path.join(self.curr_path,'words.db'))		
+		#Get the cursor
+		c = conn.cursor()		
+		#Setup the pattern
+		t = (word,1,)
+		c.execute("""UPDATE LastWord
+					 SET Word = ? WHERE
+					 Id = ?""",
+					 t)
+		#Commit the changes
+		conn.commit()
+		#Close the connection
+		conn.close()

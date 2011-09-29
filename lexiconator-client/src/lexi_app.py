@@ -75,21 +75,18 @@ class LexiApp(LexiGUIDelegate):
 		#Finally we setup the gui hanlder
 		self.guiHandler = LexiGUI(self)
 		self.guiHandler.initGUI()
-		self.guiHandler.setWord(self.curr_word,
-								self.curr_definition,
-								self.curr_usage,
-								self.curr_user_rating)
-		self.guiHandler.setMode(self.curr_search_pattern,
-								self.curr_min_rating,
-								self.curr_max_rating,
-								self.curr_randomize)
-				
+		
+		self.curr_search_pattern = self.dbHandler.fetchLastWord()
 		self.getNextWord()
 		self.guiHandler.setWord(self.curr_word,
 								self.curr_definition,
 								self.curr_usage,
-								self.curr_user_rating
-								)
+								self.curr_user_rating)				
+		self.guiHandler.setMode(self.curr_search_pattern,
+								self.curr_min_rating,
+								self.curr_max_rating,
+								self.curr_randomize)
+
 		self.guiHandler.startLoop()
 		
 	def getNextWord(self):
@@ -123,12 +120,14 @@ class LexiApp(LexiGUIDelegate):
 				self.dbHandler.updateRating(self.curr_word,0)
 				self.curr_user_rating = 0
 			else:
-				foundDefined = True					
-				self.guiHandler.setWord(self.curr_word.lstrip().rstrip(),
+				foundDefined = True
+				curr_word = self.curr_word.lstrip().rstrip()					
+				self.guiHandler.setWord(curr_word,
 										self.curr_definition,
 										self.curr_usage,
 										self.curr_user_rating
 										)
+				self.dbHandler.updateLastWord(self.curr_word)
 				
 			#The current pattern offset must be incremented by 1	
 			self.curr_pattern_offset = self.curr_pattern_offset + 1
