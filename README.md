@@ -6,7 +6,9 @@ Lexiconator is a very simple learning aid to help improve your vocabulary, much 
 
 ## Requirements
 
-Written in Python, it has a console based GUI (based on curses) and hence will run "as is" on most Posix systems with Python (version >= 2.6) installed. Will work on Windows with Cygwin (not tested). As such, its only requirements are the aforementioned Python interpreter.
+Short answer: python (>=2.7) with sqlite3 support
+
+Long answer: Written in Python, Lexiconator has a console based GUI (based on curses) and hence will run "as is" on most Posix systems with Python (version >= 2.6) installed. Will work on Windows with Cygwin (not tested). As such, its only requirements are the aforementioned Python interpreter and sqlite3 interface for Python.
 
 Lexiconator will lookup word definitions from the Wiktionary database when it is online. In offline mode, it looks up word definitions from the offline Wordnet database packaged with the client. Note that in offline mode, no usage examples are be available since the WordNet database does not provide any.
 
