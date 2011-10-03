@@ -20,11 +20,18 @@
 
 import json
 import urllib2
+import os
+import sys
 
 class LexiQuery():
-	def __init__(self):
-		pass
-
+	def __init__(self, srcPath):
+		self.srcPath = srcPath
+		pywn_path = os.path.join(srcPath,"pywn")
+		sys.path.append(pywn_path)
+		os.environ['WNDICT'] = os.path.join(pywn_path,'dict')
+		from stdwn import impl
+		self.impl = impl
+		
 	def queryWordInfo(self,word,url="http://localhost:8080"):
 		"""Queries the Google app engine server for the definition and usage of specified
 		word and returns the result as a tuple pf the form: (definition, usage).
@@ -35,11 +42,22 @@ class LexiQuery():
 		word = word.rstrip()
 		word = word.lstrip()
 		query_url = url + "?word=" + word
-		query_result = urllib2.urlopen(query_url)
-		result_json = query_result.read()
-		result_list = json.loads(result_json)
-		return (result_list[0],result_list[1])
 		
+		try:
+			query_result = urllib2.urlopen(query_url)
+			result_json = query_result.read()
+			result_list = json.loads(result_json)
+			return (result_list[0],result_list[1])
+		
+		except urllib2.URLError:
+			#This would happen if there is no access to the internet
+			#In such a case query the result from local wordnet database
+			synsets = self.impl.lookupSynsetsByForm(word)
+			definition_string = ""
+			for i in range(len(synsets)):
+				definition_string = definition_string + str(i+1) + "." + synsets[i].gloss + "\n" 
+			
+			return (definition_string,"")	
 #def main():
 #	queryHandler = LexiQuery()
 #	print queryHandler.queryWordInfo("aa")

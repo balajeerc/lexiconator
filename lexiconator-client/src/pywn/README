@@ -1,0 +1,36 @@
+PyWN("pin") - Python WordNet
+
+WordNet is available from www.cogsci.princeton.edu/~wn
+
+Download and install the latest wordnet distrobution.(Actually, all that
+is required is an up-to-date format for the data files. PyWN is pure
+Python and makes no use of the C libraries provided with wordnet.
+
+Put each of the .py files somewhere in your python search path.
+
+>>> from stdwn import impl
+>>> synsets = impl.lookupSynsetsByForm("run")
+>>> len(synsets)
+52
+>>> synsets[0].gloss
+' a short trip'
+>>> for wf in synsets[14].synonyms:    
+...  print wf.form,
+... 
+move go run
+>>> print synsets[14].gloss
+ progress by being changed: "The speech has to go through several more
+drafts"
+>>> rels = synsets[14].relations('@') #hypernyms
+>>> rels[0].gloss
+' undergo a change'
+>>> for wf in rels[0].synonyms:
+...  print wf.form,
+... 
+change
+>>> rels[0] == synsets[14].hypernym()
+1
+>>> 
+
+more description is inside pywn.py, esp the class definitions for Synset
+and WordSense

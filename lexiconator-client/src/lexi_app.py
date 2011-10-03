@@ -71,7 +71,7 @@ class LexiApp(LexiGUIDelegate):
 		self.dbHandler = LexiDB(currPath)
 		self.dbHandler.initDB()
 		#Next we initialise the query handler
-		self.queryHandler = LexiQuery()
+		self.queryHandler = LexiQuery(currPath)
 		#Finally we setup the gui hanlder
 		self.guiHandler = LexiGUI(self)
 		self.guiHandler.initGUI()
@@ -117,8 +117,9 @@ class LexiApp(LexiGUIDelegate):
 				#This means that there was no meaning found for this word in Webster's dictionary!
 				#This must be one of those unimportant Latin scientific terms, whose rating we 
 				#immediately set to 0
-				self.dbHandler.updateRating(self.curr_word,0)
-				self.curr_user_rating = 0
+				#self.dbHandler.updateRating(self.curr_word,0)
+				#self.curr_user_rating = 0
+				pass
 			else:
 				foundDefined = True
 				curr_word = self.curr_word.lstrip().rstrip()					
